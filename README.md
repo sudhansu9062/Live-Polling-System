@@ -5,6 +5,7 @@ A real-time interactive polling system built with React and Node.js, featuring s
 ## Features
 
 ### Teacher Features
+
 - ✅ Create new polls with custom questions and options (2-6 options)
 - ✅ View live polling results with real-time updates
 - ✅ Can only ask new questions when no active poll exists or all students have answered
@@ -13,7 +14,8 @@ A real-time interactive polling system built with React and Node.js, featuring s
 - ✅ View past poll results (stored in memory)
 - ✅ Real-time chat with students
 
-### Student Features  
+### Student Features
+
 - ✅ Enter unique name on first visit (unique per browser tab)
 - ✅ Submit answers once a question is asked
 - ✅ View live polling results after submission
@@ -21,6 +23,7 @@ A real-time interactive polling system built with React and Node.js, featuring s
 - ✅ Real-time chat with teacher and other students
 
 ### Technical Features
+
 - ✅ Real-time communication using Socket.io
 - ✅ Redux state management
 - ✅ TypeScript for type safety
@@ -39,11 +42,13 @@ A real-time interactive polling system built with React and Node.js, featuring s
 ## Installation & Setup
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - npm or yarn
 - MongoDB (optional, for data persistence)
 
 ### Backend Setup
+
 ```bash
 cd backend
 npm install
@@ -53,6 +58,7 @@ npm run dev
 The backend will start on `http://localhost:5000`
 
 ### Frontend Setup
+
 ```bash
 cd frontend
 npm install
@@ -64,6 +70,7 @@ The frontend will start on `http://localhost:3000`
 ### Environment Variables
 
 **Backend (.env)**:
+
 ```
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/polling-system
@@ -72,6 +79,7 @@ NODE_ENV=development
 ```
 
 **Frontend (.env)**:
+
 ```
 REACT_APP_BACKEND_URL=http://localhost:5000
 ```
@@ -79,10 +87,12 @@ REACT_APP_BACKEND_URL=http://localhost:5000
 ## Usage
 
 1. **Start the Application**:
+
    - Run both backend and frontend servers
    - Open `http://localhost:3000` in your browser
 
 2. **Teacher Workflow**:
+
    - Click "Teacher" on the landing page
    - Enter your name
    - Create polls with questions and multiple choice options
@@ -90,7 +100,7 @@ REACT_APP_BACKEND_URL=http://localhost:5000
    - View live results and manage connected students
 
 3. **Student Workflow**:
-   - Click "Student" on the landing page  
+   - Click "Student" on the landing page
    - Enter your unique name
    - Wait for teacher to create a poll
    - Select your answer and submit within the time limit
@@ -100,7 +110,8 @@ REACT_APP_BACKEND_URL=http://localhost:5000
 
 ### Backend Deployment (Railway/Heroku)
 
-1. **Railway**: 
+1. **Railway**:
+
    ```bash
    npm install -g @railway/cli
    railway login
@@ -120,11 +131,12 @@ REACT_APP_BACKEND_URL=http://localhost:5000
 ### Frontend Deployment (Vercel/Netlify)
 
 1. **Vercel**:
+
    ```bash
    npm install -g vercel
    vercel --prod
    ```
-   
+
    Set environment variable: `REACT_APP_BACKEND_URL=https://your-backend-url.com`
 
 2. **Netlify**:
@@ -134,12 +146,14 @@ REACT_APP_BACKEND_URL=http://localhost:5000
    - Add environment variable: `REACT_APP_BACKEND_URL=https://your-backend-url.com`
 
 ### MongoDB Setup (Production)
+
 - Use MongoDB Atlas for cloud database
 - Update `MONGODB_URI` in your backend environment variables
 
 ## API Endpoints
 
 ### HTTP Endpoints
+
 - `GET /api/health` - Health check
 - `GET /api/active-poll` - Get current active poll
 - `GET /api/poll-history` - Get poll history
@@ -147,6 +161,7 @@ REACT_APP_BACKEND_URL=http://localhost:5000
 ### Socket Events
 
 **Client → Server:**
+
 - `join` - Join session with name and role
 - `create-poll` - Create new poll (teacher only)
 - `submit-answer` - Submit poll answer (student only)
@@ -154,6 +169,7 @@ REACT_APP_BACKEND_URL=http://localhost:5000
 - `remove-student` - Remove student (teacher only)
 
 **Server → Client:**
+
 - `poll-state` - Current poll state
 - `new-poll` - New poll created
 - `poll-results-updated` - Live results update
@@ -210,7 +226,7 @@ polling-system/
 ## Future Enhancements
 
 - [ ] User authentication and authorization
-- [ ] Poll scheduling and advanced settings  
+- [ ] Poll scheduling and advanced settings
 - [ ] Analytics and detailed reporting
 - [ ] Export results to CSV/PDF
 - [ ] Multiple choice question types
