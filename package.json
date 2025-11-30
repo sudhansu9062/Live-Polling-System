@@ -7,7 +7,7 @@
     "start": "node app.js",
     "build": "cd frontend && npm install && npm run build",
     "dev": "node app.js",
-    "postinstall": "cd frontend && npm install"
+    "postinstall": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "express": "^4.18.2",
