@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Token Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+        }
+        button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        .token-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .decoded-display {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .error {
+            background: rgba(255, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 JWT Token Generator & Viewer</h1>
+        
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" value="John Doe" placeholder="Enter your name">
+        </div>
+        
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select id="role">
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" value="user_123" placeholder="Enter user ID">
+        </div>
+        
+        <button onclick="generateToken()">Generate JWT Token</button>
+        
+        <div id="result"></div>
+        
+        <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.3);">
+        
+        <h2>Verify Token</h2>
+        <div class="form-group">
+            <label for="tokenInput">Paste JWT Token:</label>
+            <input type="text" id="tokenInput" placeholder="Paste your JWT token here">
+        </div>
+        <button onclick="verifyToken()">Verify Token</button>
+        
+        <div id="verifyResult"></div>
+    </div>
+
+    <script>
+        // Simple client-side JWT demo (NOT for production!)
+        const secret = 'your-super-secret-jwt-key-here';
+        
+        function base64UrlEncode(obj) {
+            const jsonStr = JSON.stringify(obj);
+            return btoa(jsonStr)
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=/g, '');
+        }
+        
+        function base64UrlDecode(str) {
+            str = str.replace(/-/g, '+').replace(/_/g, '/');
+            while (str.length % 4) {
+                str += '=';
+            }
+            return JSON.parse(atob(str));
+        }
+        
+        function generateToken() {
+            const name = document.getElementById('name').value;
+            const role = document.getElementById('role').value;
+            const userId = document.getElementById('userId').value;
+            
+            const header = {
+                alg: 'HS256',
+                typ: 'JWT'
+            };
+            
+            const payload = {
+                id: userId,
+                name: name,
+                role: role,
+                iat: Math.floor(Date.now() / 1000),
+                exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+            };
+            
+            const headerEncoded = base64UrlEncode(header);
+            const payloadEncoded = base64UrlEncode(payload);
+            
+            // Simple demo token (not cryptographically secure)
+            const token = headerEncoded + '.' + payloadEncoded + '.demo-signature-' + Date.now();
+            
+            document.getElementById('result').innerHTML = `
+                <h3>✅ Generated JWT Token:</h3>
+                <div class="token-display">${token}</div>
+                
+                <h3>🔍 Decoded Header:</h3>
+                <div class="decoded-display">${JSON.stringify(header, null, 2)}</div>
+                
+                <h3>🔍 Decoded Payload:</h3>
+                <div class="decoded-display">${JSON.stringify(payload, null, 2)}</div>
+                
+                <p><strong>Token expires:</strong> ${new Date(payload.exp * 1000).toLocaleString()}</p>
+            `;
+        }
+        
+        function verifyToken() {
+            const token = document.getElementById('tokenInput').value;
+            
+            if (!token) {
+                document.getElementById('verifyResult').innerHTML = 
+                    '<div class="error">❌ Please enter a token</div>';
+                return;
+            }
+            
+            try {
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    throw new Error('Invalid token format');
+                }
+                
+                const header = base64UrlDecode(parts[0]);
+                const payload = base64UrlDecode(parts[1]);
+                
+                const now = Math.floor(Date.now() / 1000);
+                const isExpired = payload.exp && payload.exp < now;
+                
+                document.getElementById('verifyResult').innerHTML = `
+                    <h3>${isExpired ? '⚠️ Expired' : '✅ Valid'} Token:</h3>
+                    
+                    <h4>Header:</h4>
+                    <div class="decoded-display">${JSON.stringify(header, null, 2)}</div>
+                    
+                    <h4>Payload:</h4>
+                    <div class="decoded-display">${JSON.stringify(payload, null, 2)}</div>
+                    
+                    <p><strong>Status:</strong> ${isExpired ? 'Expired ❌' : 'Active ✅'}</p>
+                    ${payload.exp ? `<p><strong>Expires:</strong> ${new Date(payload.exp * 1000).toLocaleString()}</p>` : ''}
+                `;
+                
+            } catch (error) {
+                document.getElementById('verifyResult').innerHTML = 
+                    `<div class="error">❌ Invalid token: ${error.message}</div>`;
+            }
+        }
+        
+        // Generate a sample token on page load
+        generateToken();
+    </script>
+</body>
+</html>
